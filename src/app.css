@@ -1,0 +1,4 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+@import "../node_modules/@picocss/pico/css/pico.min.css";

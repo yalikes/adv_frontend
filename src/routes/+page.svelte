@@ -1,26 +1,26 @@
 <script>
     import Mybutton from "./Mybutton.svelte";
 </script>
+<nav class="container-fluid">
+    <ul>
+        <li>
+            <a href="./" class="contrast"><strong>Brand</strong></a>
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <details role="list" dir="rtl">
+                <summary aria-haspopup="listbox" role="link" class="secondary">Example 1</summary>
+                <ul role="listbox">
+                    <li><p>t1</p></li>
+                    <li><p>t2</p></li>
+                    <li><p>t3</p></li>
+                    <li><p>t4</p></li>
+                </ul>
+            </details>
+        </li>
+    </ul>
+</nav>
 
-<h1 class="bold text-4xl text-center">Welcome to SvelteKit</h1>
-<div>
-    <p>
-        Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-    </p>
-    <button class="">Hello, TailWind</button>
-</div>
-<Mybutton />
-
-<style lang="postcss">
-    :global(html) {
-        background-color: theme(colors.gray.100);
-    }
-    p {
-        font-size: 2rem;
-        width: clamp(45ch, 50%, 75ch);
-    }
-    div {
-        display: flex;
-        flex-direction: column;
-    }
+<style>
 </style>
