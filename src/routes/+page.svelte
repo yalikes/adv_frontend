@@ -1,13 +1,9 @@
 <script>
-    import Mybutton from "./Mybutton.svelte";
 </script>
-
-<h1 class="bold text-4xl text-center">Welcome to SvelteKit</h1>
-<p>
-    this is the first time I use tailwind
+<h1 class="text-center">Title</h1>
+<p class="!text-xl">
+    some test text.
 </p>
-<style lang="postcss">
-    /* :global(html) {
-        background-color: theme(colors.gray.100);
-    } */
+<code>let x=42;</code>
+<style>
 </style>
