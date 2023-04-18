@@ -21,6 +21,12 @@
         </li>
     </ul>
 </nav>
-
+    <button class="test-button">
+        Hello Pico
+    </button>
 <style>
+    .test-button{
+        width: auto;
+        margin: 0;
+    }
 </style>
