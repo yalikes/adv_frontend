@@ -7,7 +7,7 @@
     this is the first time I use tailwind
 </p>
 <style lang="postcss">
-    :global(html) {
+    /* :global(html) {
         background-color: theme(colors.gray.100);
-    }
+    } */
 </style>
