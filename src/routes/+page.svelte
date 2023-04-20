@@ -1,9 +1,14 @@
 <script>
+    import SideBar from "./SideBar.svelte";
 </script>
-<h1 class="text-center">Title</h1>
-<p class="!text-xl">
-    some test text.
-</p>
-<code>let x=42;</code>
+<div class="flex">
+    <SideBar></SideBar>
+</div>
+
+<div class="fixed left-16 w-64 h-64 bg-slate-950">
+    <div class=" bg-orange-500 w-32 h-32">
+
+    </div>
+</div>
 <style>
 </style>
