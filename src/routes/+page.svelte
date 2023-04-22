@@ -8,7 +8,6 @@ import SideBar from "./SideBar.svelte";
 </div>
 
 
-
 <style lang="postcss">
 
 </style>
