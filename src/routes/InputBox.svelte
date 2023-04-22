@@ -1,0 +1,1 @@
+<input type="text" class="rounded-xl p-1 m-0 bg-[--input-bg-gray] block text-white">

@@ -1,17 +1,17 @@
 <script>
-    import ChevronCircleUp from "svelte-icons/fa/FaChevronCircleUp.svelte";
+    import FaComments from "svelte-icons/fa/FaComments.svelte";
     import SideBarIcon from "./SideBarIcon.svelte";
+    import MdSettings from "svelte-icons/md/MdSettings.svelte";
 </script>
 
-<div
-    class="fixed top-0 left-0 h-screen w-16
-            m-0 flex flex-col bg-gray-900 text-white shadow-lg"
+<nav
+    class="h-screen w-16 m-0 flex
+        flex-col bg-[--nav-bg-black] text-white shadow-lg"
 >
-    <i>A</i>
-    <i>B</i>
-    <i>C</i>
-    <i>D</i>
-    <SideBarIcon>
-        <ChevronCircleUp></ChevronCircleUp>
+    <SideBarIcon tooltip={"message"}>
+        <FaComments />
     </SideBarIcon>
-</div>
+    <SideBarIcon tooltip={"setting"}>
+        <MdSettings />
+    </SideBarIcon>
+</nav>

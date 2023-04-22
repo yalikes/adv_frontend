@@ -1,14 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 @layer components{
     .sidebar-icon{
-        @apply relative flex items-center justify-items-center
+        @apply relative flex flex-col justify-center
         h-12 w-12 mt-2 mb-2 mx-auto shadow-lg
-        bg-gray-600 text-green-500
-        hover:bg-green-600 hover:text-white
+        bg-gray-600 text-[--nav-fg-green]
+        hover:bg-[--nav-fg-green] hover:text-white
         rounded-3xl hover:rounded-xl
-        transition-all duration-300 ease-linear;
+        transition-all duration-200 ease-linear;
     }
+    .sidebar-tooltip{
+        @apply absolute w-auto p-2 m-2 min-w-max left-14 bottom-0
+            rounded-md shadow-md
+            text-white bg-[--nav-border-gray]
+            text-xs font-bold
+            transition-all duration-100 scale-0 origin-left;
+    }
+}
+
+:root{
+    --nav-bg-black: #1E1F22;
+    --nav-border-gray: #313338;
+    --nav-fg-green: #23A559;
+    --input-bg-gray: #383A40;
 }

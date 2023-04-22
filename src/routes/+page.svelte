@@ -1,14 +1,14 @@
 <script>
-    import SideBar from "./SideBar.svelte";
+    import ChatBox from "./ChatBox.svelte";
+import SideBar from "./SideBar.svelte";
 </script>
-<div class="flex">
+<div class="grid grid-cols-[4rem_minmax(400px,_1fr)] ">
     <SideBar></SideBar>
+    <ChatBox></ChatBox>
 </div>
 
-<div class="fixed left-16 w-64 h-64 bg-slate-950">
-    <div class=" bg-orange-500 w-32 h-32">
 
-    </div>
-</div>
-<style>
+
+<style lang="postcss">
+
 </style>
