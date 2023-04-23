@@ -19,9 +19,30 @@
     }
 }
 
+/*for chrome*/
+::-webkit-scrollbar{
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--nav-border-gray); 
+}
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #aaa; 
+}
+
+/*for firefox*/
+.custom-scrollbar{
+    scrollbar-width: thin;
+}
+
+
 :root{
     --nav-bg-black: #1E1F22;
     --nav-border-gray: #313338;
     --nav-fg-green: #23A559;
     --input-bg-gray: #383A40;
 }
+

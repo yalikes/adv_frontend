@@ -7,7 +7,6 @@ import SideBar from "./SideBar.svelte";
     <ChatBox></ChatBox>
 </div>
 
-
 <style lang="postcss">
 
 </style>

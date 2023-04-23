@@ -1,14 +1,11 @@
 import type { AvatarColor } from "./avatar_vars";
+import type { User } from "./user";
 
 export class Message {
-    user_id: string;
-    user_name: string;
-    avatar_color: AvatarColor;
+    user: User;
     message_text: string;
-    constructor(user_id: string, user_name: string, msg_text: string, avatar_color: AvatarColor) {
-        this.user_id = user_id;
-        this.avatar_color = avatar_color;
+    constructor(user: User, msg_text: string) {
+        this.user = user;
         this.message_text = msg_text;
-        this.user_name = user_name;
     }
 }
