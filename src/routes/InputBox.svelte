@@ -1,16 +1,18 @@
 <script lang="ts">
-    import Page from "./+page.svelte";
-
+    import { createEventDispatcher } from "svelte";
+    const dispatch = createEventDispatcher<{done: {result: string}}>();
     let text = "";
+
     function input_done() {
         if (text == "") {
             return;
         }
         let result = text;
         text = "";
+        dispatch("done", { result });
     }
     function check_enter(e: KeyboardEvent) {
-        if(e.key==="Enter"){
+        if (e.key === "Enter") {
             input_done();
         }
     }
