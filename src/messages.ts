@@ -1,3 +1,4 @@
-import { writable } from 'svelte/store';
+import type { Message } from '$lib/message_box_model';
+import { writable, type Writable } from 'svelte/store';
 
-export const count = writable(0);
+export const message_list: Writable<Message[]> = writable([]);
