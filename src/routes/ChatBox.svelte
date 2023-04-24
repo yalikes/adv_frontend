@@ -9,7 +9,7 @@
 
     let chat_box: Element;
 
-    let this_user: User = new User("1", "algebnaly");
+    export let this_user: User = new User("1", "algebnaly");
 
     let msg_list: Message[] = [];
     function input_message_done(event: CustomEvent<{ result: string }>) {

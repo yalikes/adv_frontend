@@ -1,12 +1,15 @@
-<script>
+<script lang="ts">
     import FaComments from "svelte-icons/fa/FaComments.svelte";
     import SideBarIcon from "./SideBarIcon.svelte";
     import MdSettings from "svelte-icons/md/MdSettings.svelte";
+    import { createEventDispatcher } from "svelte";
+    import { NavChoose } from "$lib/nav_choose";
+    const dispatch = createEventDispatcher<{choose: {result: NavChoose}}>();
     function choose_message_box(){
-
+        dispatch("choose", {result: NavChoose.Message})
     }
     function choose_setting_box(){
-        
+        dispatch("choose", {result: NavChoose.Setting})
     }
 </script>
 
