@@ -1,4 +1,5 @@
 export enum NavChoose {
-    Message,
+    GroupMessage,
+    PrivateMessage,
     Setting
 }

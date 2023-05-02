@@ -1,0 +1,1 @@
+export const SERVER_URL = "backend.org:3000";
