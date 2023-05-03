@@ -6,8 +6,10 @@
     import InputBox from "./InputBox.svelte";
     import MessageBox from "./MessageBox.svelte";
     import type { User } from "$lib/user";
-    import { group_message_map, private_message_map } from "../messages";
+    import { ChatMessageRequest, MessageType, group_message_map, private_message_map, send_private_message } from "../messages";
     import { onMount } from "svelte";
+    import { Result } from "postcss";
+    import type { Session } from "$lib/session";
 
 
     let chat_box: Element;
@@ -15,10 +17,11 @@
 
     export let this_user: User;
     export let is_in_group: boolean;
+    export let session: Session;
 
     let msg_list: Message[] = [];
     let group_list: number[] = [11, 12, 13];
-    let private_list: number[] = [1,2,3];
+    let private_list: number[] = [100000,2,3];
     let select_list: number[] = [];
 
     const unsubscribe_group_message = group_message_map.subscribe((m_list) => {
@@ -31,6 +34,21 @@
     );
 
     function input_message_done(event: CustomEvent<{ result: string }>) {
+        if(is_in_group){
+            send_private_message(new ChatMessageRequest(
+                MessageType.Group,
+                event.detail.result,
+                current_gp_num,
+                session
+            ));
+        }else{
+            send_private_message(new ChatMessageRequest(
+                MessageType.Private,
+                event.detail.result,
+                current_gp_num,
+                session
+            ));
+        }
         // message_list.update((m_list) => {
         //     m_list.push(new Message(this_user, event.detail.result));
         //     return m_list;

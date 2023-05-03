@@ -40,8 +40,7 @@
         });
 
         socket.addEventListener("message", (event) => {
-            console.log(event.data);
-            socket.send(event.data);
+            
         });
     });
 </script>
@@ -49,10 +48,10 @@
 <div class="grid grid-cols-[4rem_minmax(400px,_1fr)]">
     <SideBar on:choose={handle_choose} />
     {#if current_box == NavChoose.GroupMessage}
-        <ChatBox {this_user} is_in_group={true} />
+        <ChatBox {this_user} is_in_group={true} session={session}/>
     {/if}
     {#if current_box == NavChoose.PrivateMessage}
-        <ChatBox {this_user} is_in_group={false} />
+        <ChatBox {this_user} is_in_group={false} session={session}/>
     {/if}
     {#if current_box == NavChoose.Setting}
         <Setting />
