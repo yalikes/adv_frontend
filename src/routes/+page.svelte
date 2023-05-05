@@ -20,8 +20,15 @@
 
     let current_box = NavChoose.GroupMessage;
     let session_ref: Session;
+    let child: ChatBox;
+    let is_in_group = true;
     function handle_choose(e: CustomEvent<{ result: NavChoose }>) {
         current_box = e.detail.result;
+        if (current_box == NavChoose.GroupMessage) {
+            is_in_group = true;
+        } else {
+            is_in_group = false;
+        }
     }
     onMount(() => {
         let session_id = localStorage.getItem("session");
@@ -38,7 +45,7 @@
             }
         });
         sync_friends_list(this_app.this_session);
-
+        child.set_session(this_app.this_session);
         let socket = new WebSocket("ws://" + BACKEND_SERVER + "/tunnel");
 
         socket.addEventListener("open", (event) => {
@@ -67,11 +74,8 @@
 
 <div class="grid grid-cols-[4rem_minmax(400px,_1fr)]">
     <SideBar on:choose={handle_choose} />
-    {#if current_box == NavChoose.GroupMessage}
-        <ChatBox is_in_group={true} session={session_ref} />
-    {/if}
-    {#if current_box == NavChoose.PrivateMessage}
-        <ChatBox is_in_group={false} session={session_ref} />
+    {#if current_box == NavChoose.GroupMessage || current_box == NavChoose.PrivateMessage}
+        <ChatBox {is_in_group} session={session_ref} bind:this={child} />
     {/if}
     {#if current_box == NavChoose.Setting}
         <Setting />

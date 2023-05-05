@@ -17,6 +17,7 @@
     import { onMount } from "svelte";
     import { Result } from "postcss";
     import type { Session } from "$lib/session";
+    import { sync_group_list } from "$lib/group";
 
     let chat_box: Element;
     let current_gp_num: number;
@@ -42,13 +43,15 @@
         current_name = current_user.user_name;
     }
 
-    const unsubscribe_group_notifer = group_message_notifer.subscribe((m_list) => {
-        // msg_list = m_list;
-    });
+    const unsubscribe_group_notifer = group_message_notifer.subscribe(
+        (m_list) => {
+            // msg_list = m_list;
+        }
+    );
     const unsubscribe_private_notifer = private_message_notifer.subscribe(
         (_) => {
             if (!is_in_group) {
-                let message_list_temp =  private_msg_map.get(current_gp_num);
+                let message_list_temp = private_msg_map.get(current_gp_num);
                 msg_list = [];
                 if (message_list_temp) {
                     msg_list = message_list_temp;
@@ -101,10 +104,7 @@
                             event.detail.result
                         )
                     );
-                    private_msg_map.set(
-                        current_gp_num_temp,
-                        p_msg_list_temp
-                    );
+                    private_msg_map.set(current_gp_num_temp, p_msg_list_temp);
                     msg_list = p_msg_list_temp;
                 }
             });
@@ -122,13 +122,16 @@
         unsubscribe_private_notifer();
     });
     onMount(() => {
+        
+    });
+
+    export function set_session(session: Session) {
         if (is_in_group) {
+            let group_list = sync_group_list(session);
         } else {
-            let friend_list = sync_friends_list(<Session>this_app.this_session);
+            let friend_list = sync_friends_list(session);
             friend_list.then((friend_list) => {
-                let private_list = (<User[]>friend_list).map((u) =>
-                    u.user_id
-                );
+                let private_list = (<User[]>friend_list).map((u) => u.user_id);
                 select_list = private_list;
                 if (select_list.length) {
                     current_gp_num = select_list[0];
@@ -137,7 +140,7 @@
                 }
             });
         }
-    });
+    }
 </script>
 
 <div

@@ -40,17 +40,26 @@ class GroupUsersInfo {
     }
 }
 class UserGroupsInfo {
+    state: string;
     groups: Group[];
-    constructor(groups: Group[]) {
+    constructor(state:string, groups: Group[]) {
+        this.state = state;
         this.groups = groups;
     }
 }
 
-function sync_group_list() {
+export function sync_group_list(session: Session) {
     fetch_post_json("/user/groups", JSON.stringify(
-        new UserGroupsRequest(<Session>this_app.this_session)
+        new UserGroupsRequest(session)
     )).then((obj) => {
-        // groups = 
+        let user_groups = <UserGroupsInfo>obj;
+        if(user_groups.state=="Ok"){
+            this_app.group_list.length = 0;
+            user_groups.groups.forEach((g)=>{
+                let new_g = new Group(g.group_id, g.group_name);
+                this_app.group_list.push(new_g);
+            });
+        }
     });
 }
 

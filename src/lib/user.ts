@@ -104,6 +104,7 @@ export function get_user_info(user_id: number): Promise<User | null> {
 
 class AppState {
     friend_list: User[] = [];
+    group_list: Group[] = [];
     this_user: User | null = null;
     this_session: Session | null = null;
     users_map: Map<number, User> = new Map();
