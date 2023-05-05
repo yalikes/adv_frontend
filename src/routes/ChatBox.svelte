@@ -1,58 +1,119 @@
 <script lang="ts">
     import { afterUpdate, onDestroy } from "svelte";
     import { AvatarColor } from "../lib/avatar_vars";
-    import type { Message } from "../lib/message_box_model";
+    import { Message } from "../lib/message_box_model";
     import Avatar from "./Avatar.svelte";
     import InputBox from "./InputBox.svelte";
     import MessageBox from "./MessageBox.svelte";
-    import type { User } from "$lib/user";
-    import { ChatMessageRequest, MessageType, group_message_map, private_message_map, send_private_message } from "../messages";
+    import { sync_friends_list, this_app, type User } from "$lib/user";
+    import {
+        ChatMessageRequest,
+        MessageType,
+        group_message_map,
+        private_message_map,
+        private_msg_map,
+        send_message,
+    } from "../messages";
     import { onMount } from "svelte";
     import { Result } from "postcss";
     import type { Session } from "$lib/session";
 
-
     let chat_box: Element;
     let current_gp_num: number;
 
-    export let this_user: User;
     export let is_in_group: boolean;
     export let session: Session;
 
     let msg_list: Message[] = [];
-    let group_list: number[] = [11, 12, 13];
-    let private_list: number[] = [100000,2,3];
+    let group_list: number[] = [];
+    let private_list: number[] = [];
     let select_list: number[] = [];
+
+    let current_name: string = "";
+
+    function refresh_msg_list() {
+        if (is_in_group) {
+        } else {
+            console.log(private_msg_map);
+            let p_msg_list_temp = private_msg_map.get(current_gp_num);
+            msg_list = [];
+            if (p_msg_list_temp) {
+                msg_list = p_msg_list_temp;
+            }
+        }
+        let current_user = <User>this_app.users_map.get(current_gp_num);
+        current_name = current_user.user_name;
+    }
 
     const unsubscribe_group_message = group_message_map.subscribe((m_list) => {
         // msg_list = m_list;
     });
     const unsubscribe_private_message = private_message_map.subscribe(
-        (m_list) => {
-            // msg_list = m_list;
+        (m_map) => {
+            if (!is_in_group) {
+                let message_list_temp = m_map.get(current_gp_num);
+                msg_list = [];
+                if (message_list_temp) {
+                    msg_list = message_list_temp;
+                }
+            }
         }
     );
 
-    function input_message_done(event: CustomEvent<{ result: string }>) {
-        if(is_in_group){
-            send_private_message(new ChatMessageRequest(
-                MessageType.Group,
-                event.detail.result,
-                current_gp_num,
-                session
-            ));
-        }else{
-            send_private_message(new ChatMessageRequest(
-                MessageType.Private,
-                event.detail.result,
-                current_gp_num,
-                session
-            ));
+    function set_current_name() {
+        if (is_in_group) {
+        } else {
+            let current_user = <User>this_app.users_map.get(current_gp_num);
+            current_name = current_user.user_name;
         }
-        // message_list.update((m_list) => {
-        //     m_list.push(new Message(this_user, event.detail.result));
-        //     return m_list;
-        // });
+    }
+
+    function input_message_done(event: CustomEvent<{ result: string }>) {
+        if (is_in_group) {
+            send_message(
+                new ChatMessageRequest(
+                    MessageType.Group,
+                    event.detail.result,
+                    current_gp_num,
+                    session
+                )
+            ).then((obj) => {
+                if (obj["state"] == "Ok") {
+                }
+            });
+        } else {
+            let current_gp_num_temp = current_gp_num;
+            send_message(
+                new ChatMessageRequest(
+                    MessageType.Private,
+                    event.detail.result,
+                    current_gp_num_temp,
+                    session
+                )
+            ).then((obj) => {
+                console.log(obj);
+                if (obj["state"] == "Ok") {
+                    let p_msg_list_temp =
+                        private_msg_map.get(current_gp_num_temp);
+                    console.log(p_msg_list_temp);
+                    if (!p_msg_list_temp) {
+                        p_msg_list_temp = [];
+                    }
+                    p_msg_list_temp.push(
+                        new Message(
+                            MessageType.Private,
+                            <User>this_app.this_user,
+                            event.detail.result
+                        )
+                    );
+                    private_msg_map.set(
+                        current_gp_num_temp,
+                        p_msg_list_temp
+                    );
+                    msg_list = p_msg_list_temp;
+                }
+            });
+        }
     }
     // svelte 官方例子
     const scrollToBottom = async (node: Element) => {
@@ -65,14 +126,25 @@
         unsubscribe_group_message();
         unsubscribe_private_message();
     });
-    onMount(()=>{
-        if(is_in_group){
+    onMount(() => {
+        if (is_in_group) {
             select_list = group_list;
-        }else{
-            select_list = private_list;
+        } else {
+            let friend_list = sync_friends_list(<Session>this_app.this_session);
+            friend_list.then((friend_list) => {
+                private_list = (<User[]>friend_list).map((u) =>
+                    parseInt(u.user_id)
+                );
+                select_list = private_list;
+                if (select_list.length) {
+                    current_gp_num = select_list[0];
+                    set_current_name();
+                }
+            });
         }
-        if (select_list){
+        if (select_list.length) {
             current_gp_num = select_list[0];
+            set_current_name();
         }
     });
 </script>
@@ -86,10 +158,11 @@
             name="select_group"
             id="select_group"
             bind:value={current_gp_num}
+            on:change={refresh_msg_list}
         >
             {#each select_list as num}
                 <option value={num}>
-                    {num}
+                    {current_name}({num})
                 </option>
             {/each}
         </select>
