@@ -1,5 +1,9 @@
 <script lang="ts">
-    import { AddGroupRequest } from "$lib/group";
+    import {
+        AddGroupRequest,
+        NewGroupRequest,
+        type NewGroupRespone,
+    } from "$lib/group";
     import { fetch_post_json } from "$lib/my_fetch";
     import type { Session } from "$lib/session";
     import { AddFriendRequest, this_app } from "$lib/user";
@@ -7,6 +11,7 @@
 
     let group_add_info = "";
     let add_friend_info = "";
+    let new_grp_info = "";
 
     type InputDoneEvent = CustomEvent<{ result: string }>;
     function add_group(event: InputDoneEvent) {
@@ -41,6 +46,23 @@
             }
         });
     }
+    function new_group(event: InputDoneEvent) {
+        let group_name = event.detail.result;
+        fetch_post_json(
+            "/group/new",
+            JSON.stringify(
+                new NewGroupRequest(<Session>this_app.this_session, group_name)
+            )
+        ).then((obj) => {
+            if (obj["state"] == "Ok") {
+                let new_grp_resp = <NewGroupRespone>obj;
+                let grp_id = new_grp_resp.group_id;
+                new_grp_info = "成功,群id: "+new_grp_resp.group_id;
+            } else {
+                add_friend_info = "失败,原因: "+obj["state"];
+            }
+        });
+    }
 </script>
 
 <div
@@ -57,5 +79,11 @@
         item_name={"用户id"}
         button_name={"添加好友"}
         on:done={add_friend}
+    />
+    <SettingInput
+        info={new_grp_info}
+        item_name={"群组名称"}
+        button_name={"新建群组"}
+        on:done={new_group}
     />
 </div>

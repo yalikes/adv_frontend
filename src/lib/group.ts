@@ -42,10 +42,24 @@ class GroupUsersInfo {
 class UserGroupsInfo {
     state: string;
     groups: Group[];
-    constructor(state:string, groups: Group[]) {
+    constructor(state: string, groups: Group[]) {
         this.state = state;
         this.groups = groups;
     }
+}
+
+export class NewGroupRequest {
+    session: Session;
+    group_name: string;
+    constructor(session: Session, group_name: string) {
+        this.session = session;
+        this.group_name = group_name;
+    }
+}
+
+export interface NewGroupRespone {
+    state: string,
+    group_id: number,
 }
 
 export function sync_group_list(session: Session) {
@@ -53,9 +67,9 @@ export function sync_group_list(session: Session) {
         new UserGroupsRequest(session)
     )).then((obj) => {
         let user_groups = <UserGroupsInfo>obj;
-        if(user_groups.state=="Ok"){
+        if (user_groups.state == "Ok") {
             this_app.group_list.length = 0;
-            user_groups.groups.forEach((g)=>{
+            user_groups.groups.forEach((g) => {
                 let new_g = new Group(g.group_id, g.group_name);
                 this_app.group_list.push(new_g);
             });

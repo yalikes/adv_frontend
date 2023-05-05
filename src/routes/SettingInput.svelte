@@ -16,7 +16,7 @@
 </script>
 
 <div class="w-full flex flex-row justify-center p-2 text-xl">
-    <div class="h-12 grid grid-cols-[6rem_6rem_18rem_6rem]">
+    <div class="h-12 grid grid-cols-[12rem_8rem_18rem_6rem]">
         <div class="w-full h-full p-1 flex flex-row justify-center">
             <label for="info" class="text-center w-full self-center"
                 >{info}</label
