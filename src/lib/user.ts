@@ -6,10 +6,10 @@ import type { Session } from "./session";
 import type { Group } from "./group";
 
 export class User {
-    user_id: string;
+    user_id: number;
     user_name: string;
     avatar: AvatarColor;
-    constructor(user_id: string, user_name: string, avatar_color: AvatarColor = AvatarColor.BLUE) {
+    constructor(user_id: number, user_name: string, avatar_color: AvatarColor = AvatarColor.BLUE) {
         this.user_id = user_id;
         this.user_name = user_name;
         this.avatar = avatar_color;
@@ -52,6 +52,12 @@ export class UserFriendsRequest {
     }
 }
 
+export class UserInfoRequest {
+    user_id: number;
+    constructor(user_id: number) {
+        this.user_id = user_id;
+    }
+}
 export class AddFriendRequest {
     session: Session;
     friend_id: number;
@@ -60,13 +66,34 @@ export class AddFriendRequest {
         this.friend_id = friend_id;
     }
 }
+export class UserThisInfoRequest{
+    session: Session;
+    constructor(session: Session) {
+        this.session = session;
+    }
+}
 
-export function get_user_info(session: Session): Promise<User | null> {
-    let user = fetch_post_json("/user/info", JSON.stringify(
-        new UserLoginRequest(session)
+export function get_this_user_info(session: Session): Promise<User | null> {
+    let user = fetch_post_json("/user/this", JSON.stringify(
+        new UserThisInfoRequest(session)
     )).then((obj) => {
         if (obj["state"] == "Ok") {
             let user = <User>obj["info"];
+            this_app.users_map.set(user.user_id, user);
+            return new User(user.user_id, user.user_name, user.avatar);
+        } else {
+            return null;
+        }
+    });
+    return user;
+}
+export function get_user_info(user_id: number): Promise<User | null> {
+    let user = fetch_post_json("/user/info", JSON.stringify(
+        new UserInfoRequest(user_id)
+    )).then((obj) => {
+        if (obj["state"] == "Ok") {
+            let user = <User>obj["info"];
+            this_app.users_map.set(user.user_id, user);
             return new User(user.user_id, user.user_name, user.avatar);
         } else {
             return null;
@@ -96,7 +123,7 @@ export function sync_friends_list(session: Session) {
                     u.user_name,
                     u.avatar
                 );
-                this_app.users_map.set(parseInt(user.user_id), user);
+                this_app.users_map.set(user.user_id, user);
             });
             this_app.friend_list = users;
         }

@@ -9,8 +9,8 @@
     import {
         ChatMessageRequest,
         MessageType,
-        group_message_map,
-        private_message_map,
+        group_message_notifer,
+        private_message_notifer,
         private_msg_map,
         send_message,
     } from "../messages";
@@ -25,8 +25,6 @@
     export let session: Session;
 
     let msg_list: Message[] = [];
-    let group_list: number[] = [];
-    let private_list: number[] = [];
     let select_list: number[] = [];
 
     let current_name: string = "";
@@ -34,7 +32,6 @@
     function refresh_msg_list() {
         if (is_in_group) {
         } else {
-            console.log(private_msg_map);
             let p_msg_list_temp = private_msg_map.get(current_gp_num);
             msg_list = [];
             if (p_msg_list_temp) {
@@ -45,13 +42,13 @@
         current_name = current_user.user_name;
     }
 
-    const unsubscribe_group_message = group_message_map.subscribe((m_list) => {
+    const unsubscribe_group_notifer = group_message_notifer.subscribe((m_list) => {
         // msg_list = m_list;
     });
-    const unsubscribe_private_message = private_message_map.subscribe(
-        (m_map) => {
+    const unsubscribe_private_notifer = private_message_notifer.subscribe(
+        (_) => {
             if (!is_in_group) {
-                let message_list_temp = m_map.get(current_gp_num);
+                let message_list_temp =  private_msg_map.get(current_gp_num);
                 msg_list = [];
                 if (message_list_temp) {
                     msg_list = message_list_temp;
@@ -91,11 +88,9 @@
                     session
                 )
             ).then((obj) => {
-                console.log(obj);
                 if (obj["state"] == "Ok") {
                     let p_msg_list_temp =
                         private_msg_map.get(current_gp_num_temp);
-                    console.log(p_msg_list_temp);
                     if (!p_msg_list_temp) {
                         p_msg_list_temp = [];
                     }
@@ -123,28 +118,24 @@
         scrollToBottom(chat_box);
     });
     onDestroy(() => {
-        unsubscribe_group_message();
-        unsubscribe_private_message();
+        unsubscribe_group_notifer();
+        unsubscribe_private_notifer();
     });
     onMount(() => {
         if (is_in_group) {
-            select_list = group_list;
         } else {
             let friend_list = sync_friends_list(<Session>this_app.this_session);
             friend_list.then((friend_list) => {
-                private_list = (<User[]>friend_list).map((u) =>
-                    parseInt(u.user_id)
+                let private_list = (<User[]>friend_list).map((u) =>
+                    u.user_id
                 );
                 select_list = private_list;
                 if (select_list.length) {
                     current_gp_num = select_list[0];
                     set_current_name();
+                    refresh_msg_list();
                 }
             });
-        }
-        if (select_list.length) {
-            current_gp_num = select_list[0];
-            set_current_name();
         }
     });
 </script>

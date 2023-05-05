@@ -1,13 +1,6 @@
+import { fetch_post_json } from "./my_fetch";
 import type { Session } from "./session";
-
-export class AddFriendRequest {
-    session: Session;
-    friend_id: number;
-    constructor(session: Session, friend_id: number) {
-        this.session = session;
-        this.friend_id = friend_id;
-    }
-}
+import { User, this_app } from "./user";
 
 export class Group {
     group_id: string;
@@ -27,10 +20,44 @@ export class AddGroupRequest {
     }
 }
 
-function sync_group_list(){
-
+export class UserGroupsRequest {
+    session: Session;
+    constructor(session: Session) {
+        this.session = session;
+    }
+}
+export class GroupUsersRequest {
+    group_id: number
+    constructor(group_id: number) {
+        this.group_id = group_id;
+    }
 }
 
-function sync_group_user(){
-    
+class GroupUsersInfo {
+    users: User[];
+    constructor(users: User[]) {
+        this.users = users;
+    }
+}
+class UserGroupsInfo {
+    groups: Group[];
+    constructor(groups: Group[]) {
+        this.groups = groups;
+    }
+}
+
+function sync_group_list() {
+    fetch_post_json("/user/groups", JSON.stringify(
+        new UserGroupsRequest(<Session>this_app.this_session)
+    )).then((obj) => {
+        // groups = 
+    });
+}
+
+function sync_group_user(group_id: number) {
+    fetch_post_json("/group/users", JSON.stringify(
+        new GroupUsersRequest(group_id)
+    )).then((obj) => {
+
+    });
 }

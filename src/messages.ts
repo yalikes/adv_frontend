@@ -1,7 +1,7 @@
 import { Message } from '$lib/message_box_model';
 import { fetch_post_json } from '$lib/my_fetch';
 import type { Session } from '$lib/session';
-import { this_app, User } from '$lib/user';
+import { get_user_info, this_app, User } from '$lib/user';
 import { writable, type Writable } from 'svelte/store';
 export class MessagePlain {
     message_type: MessageType;
@@ -36,8 +36,8 @@ export class ChatMessageRequest {
 }
 
 
-export const group_message_map: Writable<Map<number, Message[]>> = writable(new Map());
-export const private_message_map: Writable<Map<number, Message[]>> = writable(new Map());
+export const group_message_notifer: Writable<number> = writable(0);
+export const private_message_notifer: Writable<number> = writable(0);
 export let private_msg_map: Map<number, Message[]> = new Map();
 export let group_msg_map: Map<number, Message[]> = new Map();
 export function send_message(message: ChatMessageRequest) {
@@ -48,21 +48,32 @@ export function send_message(message: ChatMessageRequest) {
 export { MessageType };
 
 export function add_message(message: MessagePlain) {
-    console.log("user_id", message.user_id);
     if (message.message_type == MessageType.Private) {
         let user = this_app.users_map.get(message.user_id);
-        let msg = new Message(message.message_type, <User>user, message.content);
-        add_private_message(msg);
+        if (!user) {
+            get_user_info(message.user_id).then(
+                (user) => {
+                    this_app.users_map.set(message.user_id, <User>user);
+                    let msg = new Message(message.message_type, <User>user, message.content);
+                    add_private_message(msg);
+                }
+            );
+        } else {
+            let msg = new Message(message.message_type, <User>user, message.content);
+            add_private_message(msg);
+        }
+    }else{
+                
     }
 }
 
 function add_private_message(message: Message) {
-    let user_id = parseInt(message.user.user_id);
+    let user_id = message.user.user_id;
     let msg_list = private_msg_map.get(user_id);
     if (!msg_list) {
         msg_list = [];
     }
     msg_list.push(message);
     private_msg_map.set(user_id, msg_list);
-    private_message_map.set(private_msg_map);
+    private_message_notifer.set(0);//triger update
 }

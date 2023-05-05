@@ -1,7 +1,7 @@
 <script lang="ts">
     import { NavChoose } from "$lib/nav_choose";
     import {
-        get_user_info,
+        get_this_user_info,
         sync_friends_list,
         this_app,
         User,
@@ -30,7 +30,7 @@
         }
         this_app.this_session = new Session(session_id as string);
         session_ref = this_app.this_session;
-        get_user_info(this_app.this_session).then((user) => {
+        get_this_user_info(this_app.this_session).then((user) => {
             if (user) {
                 this_app.this_user = user;
             } else {
