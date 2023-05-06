@@ -18,7 +18,7 @@
         let group_id_str = event.detail.result;
         let group_id = parseInt(group_id_str);
         fetch_post_json(
-            "/groub/add/member",
+            "/group/add/member",
             JSON.stringify(
                 new AddGroupRequest(<Session>this_app.this_session, group_id)
             )

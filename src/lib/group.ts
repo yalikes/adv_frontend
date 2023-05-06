@@ -3,9 +3,9 @@ import type { Session } from "./session";
 import { User, this_app } from "./user";
 
 export class Group {
-    group_id: string;
+    group_id: number;
     group_name: string;
-    constructor(user_id: string, user_name: string) {
+    constructor(user_id: number, user_name: string) {
         this.group_id = user_id;
         this.group_name = user_name;
     }
@@ -63,7 +63,7 @@ export interface NewGroupRespone {
 }
 
 export function sync_group_list(session: Session) {
-    fetch_post_json("/user/groups", JSON.stringify(
+    return fetch_post_json("/user/groups", JSON.stringify(
         new UserGroupsRequest(session)
     )).then((obj) => {
         let user_groups = <UserGroupsInfo>obj;
@@ -72,8 +72,10 @@ export function sync_group_list(session: Session) {
             user_groups.groups.forEach((g) => {
                 let new_g = new Group(g.group_id, g.group_name);
                 this_app.group_list.push(new_g);
+                this_app.group_map.set(new_g.group_id, new_g);
             });
         }
+        return this_app.group_list;
     });
 }
 

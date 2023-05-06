@@ -26,7 +26,7 @@
         current_box = e.detail.result;
         if (current_box == NavChoose.GroupMessage) {
             is_in_group = true;
-        } else {
+        } else if (current_box == NavChoose.PrivateMessage) {
             is_in_group = false;
         }
     }
@@ -74,7 +74,10 @@
 
 <div class="grid grid-cols-[4rem_minmax(400px,_1fr)]">
     <SideBar on:choose={handle_choose} />
-    {#if current_box == NavChoose.GroupMessage || current_box == NavChoose.PrivateMessage}
+    {#if current_box == NavChoose.GroupMessage}
+        <ChatBox {is_in_group} session={session_ref} bind:this={child} />
+    {/if}
+    {#if current_box == NavChoose.PrivateMessage}
         <ChatBox {is_in_group} session={session_ref} bind:this={child} />
     {/if}
     {#if current_box == NavChoose.Setting}

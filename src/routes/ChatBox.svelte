@@ -17,7 +17,7 @@
     import { onMount } from "svelte";
     import { Result } from "postcss";
     import type { Session } from "$lib/session";
-    import { sync_group_list } from "$lib/group";
+    import { Group, sync_group_list } from "$lib/group";
 
     let chat_box: Element;
     let current_gp_num: number;
@@ -39,8 +39,6 @@
                 msg_list = p_msg_list_temp;
             }
         }
-        let current_user = <User>this_app.users_map.get(current_gp_num);
-        current_name = current_user.user_name;
     }
 
     const unsubscribe_group_notifer = group_message_notifer.subscribe(
@@ -62,6 +60,8 @@
 
     function set_current_name() {
         if (is_in_group) {
+            let current_group = <Group>this_app.group_map.get(current_gp_num);
+            current_name = current_group.group_name;
         } else {
             let current_user = <User>this_app.users_map.get(current_gp_num);
             current_name = current_user.user_name;
@@ -121,13 +121,23 @@
         unsubscribe_group_notifer();
         unsubscribe_private_notifer();
     });
-    onMount(() => {
-        
+    onMount(()=>{
+        if(this_app.this_session){
+            set_session(this_app.this_session);
+        }
     });
-
     export function set_session(session: Session) {
         if (is_in_group) {
             let group_list = sync_group_list(session);
+            group_list.then((g_list) => {
+                let g_num_list = g_list.map((g) => g.group_id);
+                select_list = g_num_list;
+                if (select_list.length) {
+                    current_gp_num = select_list[0];
+                    set_current_name();
+                    refresh_msg_list();
+                }
+            });
         } else {
             let friend_list = sync_friends_list(session);
             friend_list.then((friend_list) => {
