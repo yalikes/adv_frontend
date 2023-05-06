@@ -13,7 +13,7 @@
     import { goto } from "$app/navigation";
     import { Session } from "$lib/session";
     import { fetch_post_json } from "$lib/my_fetch";
-    import { add_message, MessagePlain, MessageType } from "../messages";
+    import { add_message, MessagePlain, MessageType, sync_messages } from "../messages";
     import { Group } from "$lib/group";
     import { Message } from "$lib/message_box_model";
     const BACKEND_SERVER = "backend.org:3000";
@@ -45,6 +45,7 @@
             }
         });
         sync_friends_list(this_app.this_session);
+        sync_messages(this_app.this_session);
         child.set_session(this_app.this_session);
         let socket = new WebSocket("ws://" + BACKEND_SERVER + "/tunnel");
 
@@ -53,11 +54,14 @@
         });
 
         socket.addEventListener("message", (event: MessageEvent<string>) => {
+            console.log("message coming");
             let msg_obj = JSON.parse(event.data);
             let msg_type: MessageType;
             let user_id: number;
+            let group_id = 0;
             if (msg_obj["message_type"] == "Group") {
                 msg_type = MessageType.Group;
+                group_id = msg_obj["group_id"];
             } else {
                 msg_type = MessageType.Private;
             }
@@ -65,6 +69,7 @@
             let msg_plain = new MessagePlain(
                 msg_type,
                 user_id,
+                group_id,
                 msg_obj["content"]
             );
             add_message(msg_plain);

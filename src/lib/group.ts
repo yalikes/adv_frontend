@@ -83,6 +83,6 @@ function sync_group_user(group_id: number) {
     fetch_post_json("/group/users", JSON.stringify(
         new GroupUsersRequest(group_id)
     )).then((obj) => {
-
+        
     });
 }

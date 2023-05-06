@@ -10,6 +10,7 @@
         ChatMessageRequest,
         MessageType,
         group_message_notifer,
+        group_msg_map,
         private_message_notifer,
         private_msg_map,
         send_message,
@@ -32,6 +33,11 @@
 
     function refresh_msg_list() {
         if (is_in_group) {
+            let p_msg_list_temp = group_msg_map.get(current_gp_num);
+            msg_list = [];
+            if (p_msg_list_temp) {
+                msg_list = p_msg_list_temp;
+            }
         } else {
             let p_msg_list_temp = private_msg_map.get(current_gp_num);
             msg_list = [];
@@ -41,13 +47,20 @@
         }
     }
 
-    const unsubscribe_group_notifer = group_message_notifer.subscribe(
-        (m_list) => {
-            // msg_list = m_list;
+    const unsubscribe_group_notifer = group_message_notifer.subscribe((_) => {
+        console.log("group notifity");
+        console.log(is_in_group, current_gp_num);
+        if (is_in_group) {
+            let message_list_temp = group_msg_map.get(current_gp_num);
+            msg_list = [];
+            if (message_list_temp) {
+                msg_list = message_list_temp;
+            }
         }
-    );
+    });
     const unsubscribe_private_notifer = private_message_notifer.subscribe(
         (_) => {
+            console.log("private notifity");
             if (!is_in_group) {
                 let message_list_temp = private_msg_map.get(current_gp_num);
                 msg_list = [];
@@ -101,6 +114,7 @@
                         new Message(
                             MessageType.Private,
                             <User>this_app.this_user,
+                            0,
                             event.detail.result
                         )
                     );
@@ -121,8 +135,8 @@
         unsubscribe_group_notifer();
         unsubscribe_private_notifer();
     });
-    onMount(()=>{
-        if(this_app.this_session){
+    onMount(() => {
+        if (this_app.this_session) {
             set_session(this_app.this_session);
         }
     });
