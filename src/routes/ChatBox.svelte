@@ -45,6 +45,16 @@
                 msg_list = p_msg_list_temp;
             }
         }
+        set_current_name();
+    }
+    function get_item_name(num: number): string {
+        if (is_in_group) {
+            let item_group = <Group>this_app.group_map.get(num);
+            return item_group.group_name;
+        } else {
+            let item_user = <User>this_app.users_map.get(num);
+            return item_user.user_name;
+        }
     }
 
     const unsubscribe_group_notifer = group_message_notifer.subscribe((_) => {
@@ -180,7 +190,7 @@
         >
             {#each select_list as num}
                 <option value={num}>
-                    {current_name}({num})
+                    {get_item_name(num)}({num})
                 </option>
             {/each}
         </select>
